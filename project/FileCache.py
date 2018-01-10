@@ -30,6 +30,7 @@ class FileCache:
         self.valid_extensions = file_extensions
         self.exclude_folders = exclude_folders
         if settings_have_changed:
+            log(ID, "update_settings...", file_extensions, exclude_folders)
             self.rebuild()
 
     def search_completions(self, needle, project_folder, valid_extensions, base_path=False):
