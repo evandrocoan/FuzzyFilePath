@@ -19,11 +19,18 @@ def get_context(view):
 	valid_needle = True
 	position = Selection.get_position(view)
 
+	# print("position: `%s`" % position)
+
 	# regions
 	word_region = view.word(position)
 	line_region = view.line(position)
 	pre_region = sublime.Region(line_region.a, word_region.a)
 	post_region = sublime.Region(word_region.b, line_region.b)
+
+	# print("word_region: `%s`" % word_region)
+	# print("line_region: `%s`" % line_region)
+	# print("pre_region:  `%s`" % pre_region)
+	# print("post_region: `%s`" % post_region)
 
 	# text
 	line = view.substr(line_region)
@@ -31,9 +38,16 @@ def get_context(view):
 	pre = view.substr(pre_region)
 	post = view.substr(post_region)
 
-	error = re.search("[" + NEEDLE_INVALID_CHARACTERS + "]", word)
+	# print("line: `%s`" % line)
+	# print("word: `%s`" % word)
+	# print("pre:  `%s`" % pre)
+	# print("post: `%s`" % post)
 
+	error = re.search("[" + NEEDLE_INVALID_CHARACTERS + "]", word)
 	needle_region = view.word(position)
+
+	# print("error: `%s`" % error)
+	# print("needle_region: `%s`" % needle_region)
 
 	# grab everything in 'separators'
 	needle = ""
@@ -41,6 +55,9 @@ def get_context(view):
 	pre_match = ""
 	# search for a separator before current word, i.e. <">path/to/<position>
 	pre_quotes = re.search("(["+NEEDLE_SEPARATOR_BEFORE+"])([^"+NEEDLE_SEPARATOR+"]*)$", pre)
+
+	# print("pre_quotes 1: `%s`" % pre_quotes)
+
 	if pre_quotes:
 		needle += pre_quotes.group(2) + word
 		separator = pre_quotes.group(1)
@@ -49,11 +66,18 @@ def get_context(view):
 	else:
 		# use whitespace as separator
 		pre_quotes = re.search("(\s)([^"+NEEDLE_SEPARATOR+"\s]*)$", pre)
+		# print("pre_quotes 2: `%s`" % pre_quotes)
+
 		if pre_quotes:
 			needle = pre_quotes.group(2) + word
 			separator = pre_quotes.group(1)
 			pre_match = pre_quotes.group(2)
 			needle_region.a -= len(pre_quotes.group(2))
+
+	# print("needle:        `%s`" % needle)
+	# print("separator:     `%s`" % separator)
+	# print("pre_match:     `%s`" % pre_match)
+	# print("needle_region: `%s`" % needle_region)
 
 	if pre_quotes:
 		post_quotes = re.search("^(["+NEEDLE_SEPARATOR_AFTER+"]*)", post)
@@ -63,37 +87,60 @@ def get_context(view):
 		else:
 			logger.verbose(ID, "no post quotes found => invalid")
 			valid = False
+		# print("post_quotes:   `%s`" % post_quotes)
 	elif not re.search("["+NEEDLE_INVALID_CHARACTERS+"]", needle):
 		needle = pre + word
 		needle_region.a = pre_region.a
 	else:
 		needle = word
 
+	# print("pre_quotes 3:  `%s`" % pre_quotes)
+	# print("needle:        `%s`" % needle)
+	# print("needle_region: `%s`" % needle_region)
+	# print("valid:         `%s`" % valid)
+
 	# grab prefix
 	prefix_region = sublime.Region(line_region.a, pre_region.b - len(pre_match) - 1)
 	prefix_line = view.substr(prefix_region)
-	# # print("prefix line", prefix_line)
+	# print("prefix line", prefix_line)
+
+	# print("prefix_line:   `%s`" % prefix_line)
+	# print("prefix_region: `%s`" % prefix_region)
 
 	#define? (["...", "..."]) -> before?
 	# before: ABC =:([
 	prefix = re.search("\s*(["+NEEDLE_CHARACTERS+"]+)["+DELIMITER+"]*$", prefix_line)
+
+	# print("prefix 1: `%s`" % prefix)
+
 	if prefix is None:
 		# validate array, like define(["...", ".CURSOR."])
 		prefix = re.search("^\s*(["+NEEDLE_CHARACTERS+"]+)["+DELIMITER+"]+", prefix_line)
+
+	# print("prefix 2: `%s`" % prefix)
 
 	if prefix:
 		# print("prefix:", prefix.group(1))
 		prefix = prefix.group(1)
 
+	# print("prefix 3: `%s`" % prefix)
+
 	tag = re.search("<\s*(["+NEEDLE_CHARACTERS+"]*)\s*[^>]*$", prefix_line)
+	# print("tag 1: `%s`" % tag)
+
 	if tag:
 		tag = tag.group(1)
 		# print("tag:", tag)
 
 	propertyName = re.search("[\s\"\'']*(["+NEEDLE_CHARACTERS+"]*)[\s\"\']*\:[^\:]*$", prefix_line)
+
+	# print("tag 2: `%s`" % tag)
+	# print("propertyName 1: `%s`" % propertyName)
+
 	if propertyName:
 		propertyName = propertyName.group(1)
-		# print("style:", style)
+
+	# print("propertyName 2: `%s`" % propertyName)
 
 	if separator is False:
 		logger.verbose(ID, "separator undefined => invalid", needle)
@@ -107,7 +154,10 @@ def get_context(view):
 		logger.verbose(ID, "prefix undefined => invalid", needle)
 		valid = False
 
-	return {
+	# print("valid: `%s`" % valid)
+	# print("valid_needle: `%s`" % valid_needle)
+
+	results = {
 		"is_valid": valid,
 		"valid_needle": valid_needle,
 		"needle": needle,
@@ -119,6 +169,9 @@ def get_context(view):
 		# really do not use any of this
 		"error": error
 	}
+
+	# print("results: `%s`" % results)
+	return results
 
 def check_trigger(trigger, expression):
 	# returns True if the expression statements match the trigger

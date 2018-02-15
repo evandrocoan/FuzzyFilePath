@@ -70,7 +70,7 @@ def get_filepaths(view, query):
         verbose(ID, "abort - no auto trigger found")
         return False
 
-    # remembed the path for `update_inserted_filepath`, query will be reset...
+    # remember the path for `update_inserted_filepath`, query will be reset...
     state["base_directory"] = query.get_post_remove_path()
 
     return current_state.search_completions(
@@ -97,25 +97,40 @@ def find_trigger(current_scope, expression, byCommand=False):
 def update_inserted_filepath(view, post_remove):
     """ post completion: adjusts inserted filepath """
     expression = Context.get_context(view)
+
     # diff of previous needle and inserted needle
     diff = get_diff(post_remove, expression["needle"])
+    # print("expression: `%s`" % expression)
+    # print("expression['needle']: `%s`" % expression["needle"])
+    # print("diff['start']:        `%s`" % diff["start"])
+
     # cleanup string
     result = re.sub("^" + diff["start"], "", expression["needle"])
+    # print("result 1: `%s`" % result)
+
     # do not replace current word
     if diff["end"] != start_expression["word"]:
         result = re.sub(diff["end"] + "$", "", result)
+
+    # print("result 2: `%s`" % result)
+    # print("base_directory: `%s`" % state.get("base_directory"))
+    # print("replace_on_insert: `%s`" % state.get("replace_on_insert"))
 
     # remove path query completely
     result = apply_post_replacements(result, state.get("base_directory"), state.get("replace_on_insert"))
     log("post cleanup path:'", expression.get("needle"), "' ~~> '", result, "'")
 
-    # replace current query with final path
-    view.run_command("ffp_replace_region", {
+    arguments = {
         "a": expression["region"].a,
         "b": expression["region"].b,
         "string": result,
         "move_cursor": True
-    })
+    }
+
+    # print("post_remove: `%s`, arguments: `%s`" % (post_remove, arguments))
+
+    # replace current query with final path
+    view.run_command("ffp_replace_region", arguments)
 
 
 def get_matching_autotriggers(scope, triggers):
