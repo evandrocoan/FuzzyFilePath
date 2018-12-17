@@ -14,6 +14,8 @@
 	"log": false,
 	// LIST OF TRIGGERS FOR AUTO COMPLETION
 	// - setting "scopes" in user settings will override all other scopes.
+	// - create "additional_scopes" in user settings to add more scopes instead.
+	//   they will be added after the existing scopes.
 	// - triggers are evaluated in given order. First match wins
 	// - specialize trigger by 1. scope 2. prefix, style and/or tagname
 	// - command (insert_path) still requires a trigger
@@ -34,9 +36,9 @@
 			"prefix": ["require", "define"],        // 2. trigger only if: require(<cursor>, define([<cursor>
 			// if 1 & 2 are true:
 			"auto": true,
-			"relative": true,                       // insert absolute
-			"base_directory": false,                // insert absolute from the set base directory (above)
-			"extensions": ["js", "html", "scss"],   // show only .js, .html and .scss files
+			"relative": true,						// insert absolute
+			"base_directory": false,				// insert absolute from the set base directory (above)
+			"extensions": ["js", "html", "scss", "json"],	// show only .js, .html and .scss files
 			"replace_on_insert": [
 				["\\.js$", ""],                     // after insertion, remove .js from path
 				["([^.])\\/index$", "\\1"],         // nodejs will load index.js by default => also remove index
@@ -237,9 +239,13 @@
 			// * - any source file (by command only)
 			"scope": "source",
 
-			"auto": false,
-			"extensions": ["js", "html", "css", "scss", "less", "png", "gif", "jpeg", "jpg", "svg"],
-			"relative": true
+		    "auto": false,
+		    "extensions": ["js", "html", "css", "scss", "less", "png", "gif", "jpeg", "jpg", "svg"],
+		    "relative": true
+		},
+	],
+	"additional_scopes": [
+		{
 		}
 	]
 }
