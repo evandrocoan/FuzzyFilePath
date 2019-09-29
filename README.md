@@ -10,24 +10,26 @@ Fuzzy search and insert filenames inside your current project directory. Highly 
 adjusted for most languages</em>
 
 
-## <a name="installation">Installation</a>
+## Installation
 
+### By Package Control
 
-### [Package Control](https://sublime.wbond.net/)
+1. Download & Install `Sublime Text 3` (https://www.sublimetext.com/3)
+1. Go to the menu `Tools -> Install Package Control`, then,
+   wait few seconds until the `Package Control` installation finishes
+1. Go to the menu `Preferences -> Package Control`
+1. Type `Package Control Add Channel` on the opened quick panel and press <kbd>Enter</kbd>
+1. Then, input the following address and press <kbd>Enter</kbd>
+   ```
+   https://raw.githubusercontent.com/evandrocoan/StudioChannel/master/channel.json
+   ```
+1. Now, go again to the menu `Preferences -> Package Control`
+1. This time type `Package Control Install Package` on the opened quick panel and press <kbd>Enter</kbd>
+1. Then, search for `FuzzyFilePath` and press <kbd>Enter</kbd>
 
-After [Package Control installation](https://sublime.wbond.net/installation), restart Sublime Text. Use the Command Palette <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> (OS X) or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> (Linux/Windows) and search for *Package Control: Install Package*. Wait until Package Control downloaded the latest package list and search for *FuzzyFilePath*.
-
-
-### [github](https://github.com/sagold/FuzzyFilePath.git)
-
-in `<SublimeConfig>/Packages/` call: `git clone https://github.com/sagold/FuzzyFilePath.git`
-
-__Sublime Text 2__
-
-in `<SublimeConfig>/Packages/FuzzyFilePath/` switch to Sublime Text 2 Branch with: `git checkout st2`
-
-Attention: Sublime Text 2 will no longer be supported.
-
+See also:
+1. [ITE - Integrated Toolset Environment](https://github.com/evandrocoan/ITE)
+1. [Package control docs](https://packagecontrol.io/docs/usage) for details.
 
 
 ## <a name="usage">Usage</a>
